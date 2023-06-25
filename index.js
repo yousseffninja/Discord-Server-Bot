@@ -36,6 +36,15 @@ client.on('messageCreate', async (message) => {
 
     await message.channel.sendTyping();
 
+    let prevMessage = await message.channel.messages.fetch({ limit: 15 });
+    prevMessage.reverse();
+
+    prevMessage.forEach((msg) => {
+        if (message.content.startsWith('!')) return;
+        if (msg.author.id !== client.user.id && message.author.bot) return;
+        if (msg.author.id !== message.author.id) return;
+    });
+
     const result  = await openAI.createChatCompletion({
         model: 'gpt-3.5-turbo',
         messages: conversationLog,
